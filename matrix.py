@@ -22,10 +22,10 @@ class Matrix:
     def dot(a, b):
         # A . B
         if type(a) is not Matrix:
-            raise AttributeError("A must be a matrix.")
+            raise ValueError("A must be a matrix.")
 
         if type(b) is not Matrix or a.cols != b.rows:
-            raise AttributeError("Not a matrix or wrong shape match")
+            raise ValueError("Not a matrix or wrong shape match")
         result = Matrix(a.rows, b.cols, False)
 
         for i in range(result.rows):
@@ -47,7 +47,7 @@ class Matrix:
     @staticmethod
     def subtract(a, b):
         if a.cols != b.cols or a.rows != b.rows:
-            raise AttributeError("Shape must match!")
+            raise ValueError("Shape must match!")
         result = Matrix(a.rows, a.cols, False)
         for i in range(a.rows):
             for j in range(a.cols):
@@ -79,7 +79,7 @@ class Matrix:
             return
 
         if type(n) is not int:
-            raise AttributeError('Int or matrix is needed to be added.')
+            raise ValueError('Int or matrix is needed to be added.')
 
         for i in range(self.rows):
             for j in range(self.cols):
@@ -123,9 +123,10 @@ class Matrix:
         result = str(df)
         return result
 
-    def print(self):
-        df = pd.DataFrame(data=self.data)
-        print(str(df))
+    def copy(self):
+        result = Matrix(self.rows, self.cols, False)
+        result.data = [list(row) for row in self.data]
+        return result
 
 def main():
     m1 = Matrix(2, 3)
@@ -142,8 +143,6 @@ def main():
     l = [1, 2, 0 , -9]
     m4 = Matrix.from_list(l)
     print(m4)
-
-    m4.print()
 
 if __name__ == '__main__':
     main()
