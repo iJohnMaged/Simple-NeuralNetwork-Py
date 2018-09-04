@@ -1,22 +1,12 @@
 from matrix import Matrix
-import math
 import random
-
-
-class ActivationFunction:
-    # A simple class to hold an activation function and its derivative.
-    def __init__(self, func, dfunc):
-        self.func = func
-        self.dfunc = dfunc
-
-
-sigmoid = ActivationFunction(lambda x: 1 / (1 + math.exp(-x)), lambda y: y * (1 - y))
-tanh = ActivationFunction(lambda x: math.tanh(x), lambda y: 1 - (y * y))
+from activation_fucntion import SIGMOID, TANH
+import pickle
 
 
 class NeuralNetwork:
 
-    def __init__(self, input_num, hidden_num, output_num, activation_func = sigmoid):
+    def __init__(self, input_num, hidden_num, output_num, activation_func = SIGMOID):
         self.input_num = input_num
         self.hidden_num = hidden_num
         self.output_num = output_num
@@ -115,6 +105,14 @@ class NeuralNetwork:
         nn.bias_o = self.bias_o.copy()
         nn.bias_h = self.bias_h.copy()
         nn.lr = self._lr
+        return nn
+
+    def serialize(self):
+        return pickle.dumps(self)
+
+    @staticmethod
+    def deserialize(data):
+        nn = pickle.loads(data)
         return nn
 
 
