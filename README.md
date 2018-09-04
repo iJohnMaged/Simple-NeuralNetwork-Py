@@ -1,6 +1,6 @@
 # Simple-NeuralNetwork-Py
 
-A very simple fully connected Neural Network implementation in Python based on the tutorials and the NN.js library by Danial Shiffman is this [playlist].
+A very simple fully connected Neural Network implementation in Python based on the tutorials and the NN.js library by Danial Shiffman in this [playlist].
 
 If you want some resources to learn about Neural Networks, I suggest checking these playlists and book:
 * [Neural networks] By [3Blue1Brown]
