@@ -1,6 +1,6 @@
 from matrix import Matrix
 import random
-from activation_fucntion import SIGMOID, TANH
+from activation_fucntions import SIGMOID, TANH
 import pickle
 
 
