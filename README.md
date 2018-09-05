@@ -10,8 +10,8 @@ If you want some resources to learn about Neural Networks, I suggest checking th
 # To-Do List
 
 * [x] Implmeneting the basic NN itself with only 1 hidden layer.
+* [x] Train the library to solve XOR problem
 * [ ] Replace `matrix.py` with `numpy`
-* [ ] Train the library to solve XOR problem
 * [ ] Train the library on the MNIST dataset
 * [ ] Add support for multiple hidden layers
 * [ ] Train the library to play games

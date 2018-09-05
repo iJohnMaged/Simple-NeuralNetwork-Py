@@ -1,12 +1,12 @@
 from matrix import Matrix
 import random
-from activation_fucntions import SIGMOID, TANH
+from activation_fucntions import SIGMOID
 import pickle
 
 
 class NeuralNetwork:
 
-    def __init__(self, input_num, hidden_num, output_num, activation_func = SIGMOID):
+    def __init__(self, input_num, hidden_num, output_num, activation_func = SIGMOID, lr = 0.1):
         self.input_num = input_num
         self.hidden_num = hidden_num
         self.output_num = output_num
@@ -114,39 +114,3 @@ class NeuralNetwork:
     def deserialize(data):
         nn = pickle.loads(data)
         return nn
-
-
-def main():
-    training_data = [{
-        'input': [0, 0],
-        'target': [0]
-        },
-        {
-        'input': [1, 0],
-        'target': [1]
-        },
-        {
-        'input': [0, 1],
-        'target': [1]
-        },
-        {
-        'input': [1, 1],
-        'target': [0]
-    }]
-
-    nn = NeuralNetwork(2, 2, 1)
-
-    for i in range(1000000):
-        data = random.choice(training_data)
-        nn.train(data['input'], data['target'])
-        # for data in training_data:
-        #     nn.train(data['input'], data['target'])
-        # random.shuffle(training_data)
-
-    print(nn.predict([0, 0]))
-    print(nn.predict([0, 1]))
-    print(nn.predict([1, 0]))
-    print(nn.predict([1, 1]))
-
-if __name__ == '__main__':
-    main()
