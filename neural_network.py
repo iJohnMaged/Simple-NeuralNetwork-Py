@@ -1,5 +1,4 @@
-from matrix import Matrix
-import random
+import numpy as np
 from activation_fucntions import SIGMOID
 import pickle
 
@@ -11,14 +10,17 @@ class NeuralNetwork:
         self.hidden_num = hidden_num
         self.output_num = output_num
 
-        self.weights_ih = Matrix(self.hidden_num, self.input_num)
-        self.weights_ho = Matrix(self.output_num, self.hidden_num)
+        self.weights_ih = np.random.uniform(-1, 1, (self.hidden_num, self.input_num))
+        self.weights_ho = np.random.uniform(-1, 1, (self.output_num, self.hidden_num))
 
-        self.bias_h = Matrix(self.hidden_num, 1)
-        self.bias_o = Matrix(self.output_num, 1)
+        self.bias_h = np.random.uniform(-1, 1, (self.hidden_num, 1))
+        self.bias_o = np.random.uniform(-1, 1, (self.output_num, 1))
 
         self._lr = 0.1
         self.activation_func = activation_func
+
+        self.npfunc = np.vectorize(SIGMOID.func)
+        self.npdfunc = np.vectorize(SIGMOID.dfunc)
 
     @property
     def lr(self):
@@ -30,73 +32,79 @@ class NeuralNetwork:
 
     def set_activation_func(self, func):
         self.activation_func = func
+        self.npfunc = np.vectorize(self.activation_func.func)
+        self.npdfunc = np.vectorize(self.activation_func.dfunc)
 
     def predict(self, input):
 
-        input_matrix = Matrix.from_list(input)
+        input_matrix = np.array(input).reshape((len(input), 1))
+        hidden = np.dot(self.weights_ih, input_matrix)
+        hidden = np.add(hidden, self.bias_h)
+        hidden = self.npfunc(hidden)
 
-        hidden = Matrix.dot(self.weights_ih, input_matrix)
-        hidden.add(self.bias_h)
-        hidden.map(self.activation_func.func)
+        output = np.dot(self.weights_ho, hidden)
+        output = np.add(output, self.bias_o)
+        output = self.npfunc(output)
 
-        output = Matrix.dot(self.weights_ho, hidden)
-        output.add(self.bias_o)
-        output.map(self.activation_func.func)
-
-        return output.to_list()
+        return output
 
     def train(self, inputs, targets):
 
-        # Generate the outputs of the hidden nodes.
-        input_matrix = Matrix.from_list(inputs)
+        input_matrix = np.array(inputs).reshape((len(inputs), 1))
 
-        hidden = Matrix.dot(self.weights_ih, input_matrix)
-        hidden.add(self.bias_h)
-        hidden.map(self.activation_func.func)
+        # Generate the outputs of the hidden nodes
+        hidden = np.dot(self.weights_ih, input_matrix)
+        hidden = np.add(hidden, self.bias_h)
+        hidden = self.npfunc(hidden)
 
-        # Generate the outputs of the outputs nodes
-        outputs = Matrix.dot(self.weights_ho, hidden)
-        outputs.add(self.bias_o)
-        outputs.map(self.activation_func.func)
+        # Generate the outputs
+        output = np.dot(self.weights_ho, hidden)
+        output = np.add(output, self.bias_o)
+        output = self.npfunc(output)
 
-        targets_matrix = Matrix.from_list(targets)
+        targets_matrix = np.array(targets).reshape(len(targets), 1)
 
-        # Calculate the error following the formula: E = targets - outputs
-        output_error = Matrix.subtract(targets_matrix, outputs)
+        # Calculate the error
+        # E = TARGETS - OUTPUTS
+        output_error = np.subtract(targets_matrix, output)
 
-        # Calculate gradient
-        gradient = Matrix.mmap(outputs, self.activation_func.dfunc)
-        gradient.scale(self._lr)
-        gradient.multiply(output_error)
-        hidden_T = Matrix.transpose(hidden)
-        # Calculate deltas for hidden-output connection
-        weights_ho_deltas = Matrix.dot(gradient, hidden_T)
+        # Calculate output gradient
+        output_gradient = self.npdfunc(output)
+        output_gradient = np.multiply(self._lr, output_gradient)
+        output_gradient = np.multiply(output_gradient, output_error)
+        hidden_T = hidden.T
 
-        # Adjust the weights and bias
-        self.weights_ho.add(weights_ho_deltas)
-        self.bias_o.add(gradient)
+        # Calculate the deltas for hidden-output layer
+        weights_ho_deltas = np.dot(output_gradient, hidden_T)
+
+        # Adjust the weights
+        self.weights_ho = np.add(self.weights_ho, weights_ho_deltas)
+        self.bias_o = np.add(self.bias_o, output_gradient)
 
         # Hidden layer error
-        weights_ho_t = Matrix.transpose(self.weights_ho)
-        hidden_error = Matrix.dot(weights_ho_t, output_error)
+        weights_ho_T = self.weights_ho.T
+        hidden_error = np.dot(weights_ho_T, output_error)
 
         # Calculate hidden layer gradient
-        hidden_gradient = Matrix.mmap(hidden, self.activation_func.dfunc)
-        hidden_gradient.scale(self._lr)
-        hidden_gradient.multiply(hidden_error)
-        input_T = Matrix.transpose(input_matrix)
-        weights_ih_deltas = Matrix.dot(hidden_gradient, input_T)
+        hidden_gradient = self.npdfunc(hidden)
+        hidden_gradient = np.multiply(hidden_gradient, self._lr)
+        hidden_gradient = np.multiply(hidden_gradient, hidden_error)
 
-        # Adjust the weights and bias for input-hidden connection
-        self.weights_ih.add(weights_ih_deltas)
-        self.bias_h.add(hidden_gradient)
+        input_T = input_matrix.T
+
+        weights_ih_deltas = np.dot(hidden_gradient, input_T)
+
+        # Adjust the weights
+        self.weights_ih = np.add(self.weights_ih, weights_ih_deltas)
+        self.bias_h = np.add(self.bias_h, hidden_gradient)
+
 
     def mutate(self, func):
-        # Accepts an arbitrary function to mutate the neural network
-        self.weights_ih.map(func)
-        self.weights_ho.map(func)
-        self.bias_h.map(func)
-        self.bias_o.map(func)
+        npfunc = np.vectorize(func)
+        self.weights_ih = npfunc(self.weights_ih)
+        self.weights_ho = npfunc(self.weights_ho)
+        self.bias_h = npfunc(self.bias_h)
+        self.bias_o = npfunc(self.bias_o)
 
     def copy(self):
         nn = NeuralNetwork(self.input_num, self.hidden_num, self.output_num, self.activation_func)

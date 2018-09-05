@@ -48,7 +48,7 @@ CANVAS_HEIGHT = 400
 
 FPS = 60
 
-RESOLUTION = 20
+RESOLUTION = 40
 
 # Initialize PyGame
 pygame.init()
@@ -99,7 +99,7 @@ class Button():
 class Slider:
 
     """
-    A class to create a slider with a maximum and minimum value.
+    A class to create a pygame slider with a maximum and minimum value.
 
     This class was adapted from:
     https://www.dreamincode.net/forums/topic/401541-buttons-and-sliders-in-pygame/
@@ -232,7 +232,7 @@ def main():
                 y = j / rows
                 output = nn.predict([x, y])
                 # Using equal values of (r, g, b) for a color
-                rgb = int(255 * output[0])
+                rgb = int(255 * output[0, 0])
                 # Converting RGB value to decimal.
                 color = (rgb << 16) + (rgb << 8) + (rgb)
                 a = i*RESOLUTION
