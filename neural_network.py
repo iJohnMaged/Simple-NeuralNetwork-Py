@@ -10,17 +10,22 @@ class NeuralNetwork:
         self.hidden_num = hidden_num
         self.output_num = output_num
 
+        self.weights_ih = None
+        self.weights_ho = None
+        self.bias_o = None
+        self.bias_h = None
+
+        self.reset()
+
+        self._lr = lr
+        self.set_activation_func(activation_func)
+
+    def reset(self):
         self.weights_ih = np.random.uniform(-1, 1, (self.hidden_num, self.input_num))
         self.weights_ho = np.random.uniform(-1, 1, (self.output_num, self.hidden_num))
 
         self.bias_h = np.random.uniform(-1, 1, (self.hidden_num, 1))
         self.bias_o = np.random.uniform(-1, 1, (self.output_num, 1))
-
-        self._lr = 0.1
-        self.activation_func = activation_func
-
-        self.npfunc = np.vectorize(SIGMOID.func)
-        self.npdfunc = np.vectorize(SIGMOID.dfunc)
 
     @property
     def lr(self):
@@ -45,7 +50,6 @@ class NeuralNetwork:
         output = np.dot(self.weights_ho, hidden)
         output = np.add(output, self.bias_o)
         output = self.npfunc(output)
-
         return output
 
     def train(self, inputs, targets):
@@ -55,11 +59,20 @@ class NeuralNetwork:
         # Generate the outputs of the hidden nodes
         hidden = np.dot(self.weights_ih, input_matrix)
         hidden = np.add(hidden, self.bias_h)
+
+        hidden_copy = None
+        if self.activation_func.use_x_vals:
+            hidden_copy = hidden.copy()
+
         hidden = self.npfunc(hidden)
 
         # Generate the outputs
         output = np.dot(self.weights_ho, hidden)
         output = np.add(output, self.bias_o)
+        output_copy = None
+        if self.activation_func.use_x_vals:
+            output_copy = output.copy()
+
         output = self.npfunc(output)
 
         targets_matrix = np.array(targets).reshape(len(targets), 1)
@@ -68,8 +81,13 @@ class NeuralNetwork:
         # E = TARGETS - OUTPUTS
         output_error = np.subtract(targets_matrix, output)
 
+
+        if self.activation_func.use_x_vals:
+            output_gradient = self.npdfunc(output_copy)
+        else:
+            output_gradient = self.npdfunc(output)
+
         # Calculate output gradient
-        output_gradient = self.npdfunc(output)
         output_gradient = np.multiply(self._lr, output_gradient)
         output_gradient = np.multiply(output_gradient, output_error)
         hidden_T = hidden.T
@@ -86,7 +104,12 @@ class NeuralNetwork:
         hidden_error = np.dot(weights_ho_T, output_error)
 
         # Calculate hidden layer gradient
-        hidden_gradient = self.npdfunc(hidden)
+
+        if self.activation_func.use_x_vals:
+            hidden_gradient = self.npdfunc(hidden_copy)
+        else:
+            hidden_gradient = self.npdfunc(hidden)
+
         hidden_gradient = np.multiply(hidden_gradient, self._lr)
         hidden_gradient = np.multiply(hidden_gradient, hidden_error)
 
