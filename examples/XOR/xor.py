@@ -90,7 +90,7 @@ def main():
     save_button = po.Button("Save SS", (325, 470), None)
 
     # A Neural Network object with 2 inputs, 2 hidden nodes and 1 output.
-    nn = NeuralNetwork(2, 2, 1, lr=lr_slider.val, activation_func=SIGMOID)
+    nn = NeuralNetwork(2, 2, 1, lr=lr_slider.val, activation_func=LEAKY_RELU)
 
     while True:
         clock.tick(FPS)
@@ -139,8 +139,8 @@ def main():
                 y = j / rows
                 output = nn.predict([x, y])
                 # Using equal values of (r, g, b) for a color
-                rgb = int(output[0, 0] * 255)
-                # rgb = max(min(int(output[0, 0] * 255), 255), 0)
+                # rgb = int(output[0, 0] * 255)
+                rgb = max(min(int(output[0, 0] * 255), 255), 0)
                 a = i*RESOLUTION
                 b = j*RESOLUTION
                 # Coloring the pixels shaping the square of side size (RESOLUTION) start at (x, y) with a color value

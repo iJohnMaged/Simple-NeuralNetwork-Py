@@ -29,3 +29,15 @@ network can achieve non-linear separation.
 ### Using sigmoid activation function
 
 ![sigmoid output](https://i.imgur.com/iQ0Goo1.jpg "Sigmoid output")
+
+### Using softplus activation function
+
+![softplus output](https://i.imgur.com/EcAtqAl.jpg "softplus output")
+
+### Using arctan activation function
+
+![arctan output](https://i.imgur.com/TwW3bbA.jpg "arctan output")
+
+### Using leaky relu activation function
+
+![leaky relu output](https://i.imgur.com/UqUduLP.jpg "leaky relu output")
