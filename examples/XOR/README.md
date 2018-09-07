@@ -41,3 +41,8 @@ network can achieve non-linear separation.
 ### Using leaky relu activation function
 
 ![leaky relu output](https://i.imgur.com/UqUduLP.jpg "leaky relu output")
+
+
+# To-Do list
+
+* [ ] Adding command line options for the neural network
