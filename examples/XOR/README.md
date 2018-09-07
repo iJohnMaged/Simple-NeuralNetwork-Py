@@ -45,4 +45,4 @@ network can achieve non-linear separation.
 
 # To-Do list
 
-* [ ] Adding command line options for the neural network
+* [x] Adding command line options for the neural network

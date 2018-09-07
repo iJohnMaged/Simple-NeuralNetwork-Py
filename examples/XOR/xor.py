@@ -1,12 +1,25 @@
 import sys, os
 # a simple way to access neural_network module.
 sys.path.append(f'..{os.sep}..')
-from activation_fucntions import *
+from activation_functions import *
 from neural_network import NeuralNetwork
 import pygame
 import random
 import pygame_objects as po
 import time
+import argparse
+
+
+parser = argparse.ArgumentParser(description='Solving the XOR problem using a neural network.')
+parser.add_argument('--hidden', type=int, default=2)
+parser.add_argument('-af', '--activation', default='sigmoid', choices=list(A_FUNCTIONS.keys()))
+parser.add_argument('-lr', '--learning_rate', type=float, default=0.01)
+args = parser.parse_args()
+
+if args.learning_rate and args.learning_rate < 0.01 or args.learning_rate > 0.5:
+    parser.error("Learning rate must be between 0.01 and 0.5")
+
+print(args)
 
 
 # XOR training data to feed into the NeuralNetwork
@@ -83,14 +96,14 @@ def main():
 
     # A slider to control the learning rate value in the neural network.
     # Starts with a value of 0.01 and has a range of 0.01 to 0.5
-    lr_slider = po.Slider("LR", 0.01, 0.5, 0.01, 150, 400)
+    lr_slider = po.Slider("LR", args.learning_rate, 0.5, 0.01, 150, 400)
 
     # A button to reset the NN when pressed.
     reset_button = po.Button("Reset NN!", (200, 470), None)
     save_button = po.Button("Save SS", (325, 470), None)
 
     # A Neural Network object with 2 inputs, 2 hidden nodes and 1 output.
-    nn = NeuralNetwork(2, 2, 1, lr=lr_slider.val, activation_func=LEAKY_RELU)
+    nn = NeuralNetwork(2, args.hidden, 1, lr=lr_slider.val, activation_func=A_FUNCTIONS[args.activation])
 
     while True:
         clock.tick(FPS)
