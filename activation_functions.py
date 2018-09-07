@@ -69,3 +69,14 @@ RELU = ActivationFunction(relu, drelu, use_x_vals=True)
 LEAKY_RELU = ActivationFunction(leaky_relu, dleaky_relu, use_x_vals=True)
 SOFTPLUS = ActivationFunction(softplus, dsoftplus, use_x_vals=True)
 GAUSSIAN = ActivationFunction(gaussian, dgaussian, range = (0, 1),use_x_vals=True)
+
+A_FUNCTIONS = {
+    'sigmoid': SIGMOID,
+    'tanh': TANH,
+    'arctan': ARCTAN,
+    'softsign': SOFTSIGN,
+    'relu': RELU,
+    'leaky_relu': LEAKY_RELU,
+    'softplus': SOFTPLUS,
+    'gaussian': GAUSSIAN
+}
