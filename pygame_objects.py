@@ -1,3 +1,10 @@
+"""
+This module contains very useful objects (Buttons and sliders!) to work with pygame.
+
+Source: https://www.dreamincode.net/forums/topic/401541-buttons-and-sliders-in-pygame/
+"""
+
+
 import pygame
 
 WHITE = (255, 255, 255)
