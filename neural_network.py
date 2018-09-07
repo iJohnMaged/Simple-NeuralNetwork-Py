@@ -1,5 +1,5 @@
 import numpy as np
-from activation_fucntions import SIGMOID
+from activation_functions import SIGMOID
 import pickle
 
 
