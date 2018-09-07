@@ -12,10 +12,17 @@ If you want some resources to learn about Neural Networks, I suggest checking th
 * [x] Implmeneting the basic NN itself with only 1 hidden layer.
 * [x] Train the library to solve XOR problem
 * [x] Replace `matrix.py` with `numpy`
-* [ ] Add more activation functions
+* [x] Add more activation functions
 * [ ] Train the library on the MNIST dataset
 * [ ] Add support for multiple hidden layers
 * [ ] Train the library to play games
+    * [ ] Flappy Bird
+
+# Getting started
+* Install required libraries to run the `neural_network` module and examples using:
+    * `pip install -r requirements.txt`
+* To run examples, run the example py from its directory, for example:
+    * `$ ..\Simple-NeuralNetwork-Py\examples\XOR> python xor.py`
 
 # Documentation
 
