@@ -11,8 +11,9 @@ import argparse
 
 
 parser = argparse.ArgumentParser(description='Solving the XOR problem using a neural network.')
-parser.add_argument('--hidden', type=int, default=2)
-parser.add_argument('-af', '--activation', default='sigmoid', choices=list(A_FUNCTIONS.keys()))
+parser.add_argument('--hidden', type=int, default=2, help='Number of hidden nodes in the neural network')
+parser.add_argument('--activation', default='sigmoid', choices=list(A_FUNCTIONS.keys()), help='Activation function to'
+                                                                                              ' be used.')
 parser.add_argument('-lr', '--learning_rate', type=float, default=0.01)
 args = parser.parse_args()
 
