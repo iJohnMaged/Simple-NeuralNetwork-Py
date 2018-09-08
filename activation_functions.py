@@ -1,3 +1,10 @@
+"""
+This modules contains a few useful activation functions.
+
+You can read more about it here: https://en.wikipedia.org/wiki/Activation_function#Comparison_of_activation_functions
+"""
+
+
 import math
 
 
