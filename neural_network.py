@@ -23,7 +23,6 @@ class NeuralNetwork:
     def reset(self):
         self.weights_ih = np.random.uniform(-1, 1, (self.hidden_num, self.input_num))
         self.weights_ho = np.random.uniform(-1, 1, (self.output_num, self.hidden_num))
-
         self.bias_h = np.random.uniform(-1, 1, (self.hidden_num, 1))
         self.bias_o = np.random.uniform(-1, 1, (self.output_num, 1))
 
@@ -40,9 +39,15 @@ class NeuralNetwork:
         self.npfunc = np.vectorize(self.activation_func.func)
         self.npdfunc = np.vectorize(self.activation_func.dfunc)
 
-    def predict(self, input):
+    def predict(self, input, get_max = False):
 
-        input_matrix = np.array(input).reshape((len(input), 1))
+        if type(input) is list:
+            input_matrix = np.array(input).reshape((len(input), 1))
+        elif type(input) is np.ndarray:
+            input_matrix = input
+        else:
+            raise ValueError('Input should be a list or np array')
+
         hidden = np.dot(self.weights_ih, input_matrix)
         hidden = np.add(hidden, self.bias_h)
         hidden = self.npfunc(hidden)
@@ -50,11 +55,20 @@ class NeuralNetwork:
         output = np.dot(self.weights_ho, hidden)
         output = np.add(output, self.bias_o)
         output = self.npfunc(output)
+
+        if get_max:
+            return output, output.argmax()
+
         return output
 
     def train(self, inputs, targets):
 
-        input_matrix = np.array(inputs).reshape((len(inputs), 1))
+        if type(inputs) is list:
+            input_matrix = np.array(inputs).reshape((len(inputs), 1))
+        elif type(inputs) is np.ndarray:
+            input_matrix = inputs
+        else:
+            raise ValueError('Input should be a list or np array')
 
         # Generate the outputs of the hidden nodes
         hidden = np.dot(self.weights_ih, input_matrix)
@@ -69,6 +83,7 @@ class NeuralNetwork:
         # Generate the outputs
         output = np.dot(self.weights_ho, hidden)
         output = np.add(output, self.bias_o)
+
         output_copy = None
         if self.activation_func.use_x_vals:
             output_copy = output.copy()
@@ -81,7 +96,6 @@ class NeuralNetwork:
         # E = TARGETS - OUTPUTS
         output_error = np.subtract(targets_matrix, output)
 
-
         if self.activation_func.use_x_vals:
             output_gradient = self.npdfunc(output_copy)
         else:
@@ -89,7 +103,7 @@ class NeuralNetwork:
 
         # Calculate output gradient
         output_gradient = np.multiply(self._lr, output_gradient)
-        output_gradient = np.multiply(output_gradient, output_error)
+        output_gradient = np.multiply(output_error, output_gradient)
         hidden_T = hidden.T
 
         # Calculate the deltas for hidden-output layer
@@ -140,6 +154,16 @@ class NeuralNetwork:
 
     def serialize(self):
         return pickle.dumps(self)
+
+    def save_to_file(self, file_name):
+        with open(file_name, 'wb') as f:
+            pickle.dump(self, f)
+
+    @staticmethod
+    def load_from_file(file_name):
+        with open(file_name, 'rb') as f:
+            nn = pickle.load(f)
+            return nn
 
     @staticmethod
     def deserialize(data):
